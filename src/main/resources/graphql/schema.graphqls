@@ -1,0 +1,18 @@
+type Address{
+    id: Int
+    street: String
+    number: Int
+}
+
+type Query{
+    findAllAddresses: [Address]
+    countAllAddresses: Int
+    findAddressById(id: Int): Address
+}
+
+type Mutation{
+    createAddress(street: String, number: Int): Address
+    updateAddressNumber(id: Int, number: Int): Address
+    deleteAddress(id: Int): Boolean
+}
+
