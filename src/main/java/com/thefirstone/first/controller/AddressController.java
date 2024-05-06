@@ -10,8 +10,6 @@ import com.thefirstone.first.util.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -30,17 +28,16 @@ public class AddressController {
     @Inject
     UserService userService;
 
-    @GetMapping(value = "/id/{id}")
+    @GetMapping(value = "/read")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     // todo danijela fix this one
-    public ResponseEntity<Address> getByUserId(@PathVariable Long id) {
+    public ResponseEntity<Address> getByUserId() {
         final Long currentUserId = applicationContext.getCurrentUser().getId();
         final Optional<Address> byId = addressService.getByUserId(currentUserId);
-        if (byId.isPresent()) {
-            return new ResponseEntity<>(byId.get(), HttpStatus.OK);
-        }
-//        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Optional parameter as a message");
-        throw new NotFoundException("Address with id " + id + " not found!");
+        return byId.map(address -> new ResponseEntity<>(address, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(null, HttpStatus.OK));
+
+////        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Optional parameter as a message");
+//        throw new NotFoundException("Address with id " + id + " not found!");
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
